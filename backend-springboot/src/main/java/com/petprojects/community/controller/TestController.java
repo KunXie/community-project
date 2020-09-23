@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping
+@RequestMapping("test")
 @Slf4j
 public class TestController {
 
-    @GetMapping("/{emailAddress}")
+    @GetMapping("/email/{emailAddress}")
     public String sendEmail(@PathVariable(value = "emailAddress") String emailAddress) {
         log.debug(emailAddress);
         return EmailProvider.sendValidationCode(emailAddress);

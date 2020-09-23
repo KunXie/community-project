@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head-fragment :: head(${'Q&A Community'})">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Index Template</title>
+    <link rel="stylesheet" href="../static/bootstrap-4.5.2-dist/css/bootstrap.min.css">
+</head>
+<body>
+<nav th:replace="fragments/nav-fragment :: nav(${7}, ${session.user})">
+    Index Nav Part
+</nav>
+<main style="height: 85vh">
+<!--list of questions-->
+</main>
+<footer th:replace="fragments/footer-fragment :: footer">
+    Index Footer Part
+</footer>
+</body>
+</html>

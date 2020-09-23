@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head-fragment :: head(${'profile'})">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Profile</title>
+    <link rel="stylesheet" href="../static/bootstrap-4.5.2-dist/css/bootstrap.min.css">
+</head>
+<body>
+<nav th:replace="fragments/nav-fragment :: nav(${7}, ${session.user})">
+    Index Nav Part
+</nav>
+<main class="container mt-5 pt-4" style="min-height: 85vh;">
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-link" id="question-tab" data-toggle="tab" href="#question-pane" role="tab"
+               aria-controls="question-tab" aria-selected="false">Questions</a>
+            <a class="nav-link" id="notification-tab" data-toggle="tab" href="#notification-pane" role="tab"
+               aria-controls="notification-tab" aria-selected="false">Notifications</a>
+            <a class="nav-link" id="personal-info-tab" data-toggle="tab" href="#personal-info-pane" role="tab"
+               aria-controls="personal-info-tab" aria-selected="false">Personal Info</a>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <!--        questions pane-->
+        <div class="tab-pane fade" id="question-pane" role="tabpanel" aria-labelledby="question-tab">
+            Question Pane
+        </div>
+        <!--        notification pane-->
+        <div class="tab-pane fade" id="notification-pane" role="tabpanel" aria-labelledby="notification-tab">
+            Notification Pane
+        </div>
+        <!--        personal info pane-->
+        <div class="tab-pane fade" id="personal-info-pane" role="tabpanel" aria-labelledby="personal-info-tab">
+            Personal Info
+        </div>
+    </div>
+</main>
+<footer th:replace="fragments/footer-fragment :: footer">
+    Index Footer Part
+</footer>
+<!--function that controls which pane would be active on load-->
+<script th:inline="javascript">
+    let param = /*[[${tab}]]*/ "question";
+    console.log(param);
+
+    window.onload = () => {
+        const tabName = param + '-tab';
+        const paneName = param + '-pane';
+
+        const questionTab = document.getElementById(tabName);
+        questionTab.classList.add("active");
+        questionTab.setAttribute("aria-selected", "true");
+
+        const questionPane = document.getElementById(paneName);
+        questionPane.classList.add("active");
+        questionPane.classList.add("show")
+    }
+</script>
+</body>
+</html>
