@@ -2,12 +2,96 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/head-fragment :: head(${'Sign Up'})">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <title>Sign Up Template</title>
+    <title>Title</title>
     <link rel="stylesheet" href="../static/bootstrap-4.5.2-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/css/signup.css">
 </head>
 <body>
+<nav th:replace="fragments/nav-fragment :: nav(${0}, ${false})">
+    Index Nav Part
+</nav>
+<!--modified from: https://getbootstrap.com/docs/4.5/examples/checkout/ -->
+<main class="container mt-5 pt-4 justify-content-center" style="min-height: 85vh;">
+    <form class="signup-body p-5 m-auto" method="post" th:action="@{/authentication/sign-up}" th:object="${signUpForm}">
+        <div class="row mb-3">
+            <img class="mx-auto rounded justify-content-center" src="https://picsum.photos/100/100" alt="" width="100" height="100">
+        </div>
+        <h1 class="h3 mb-3 font-weight-normal text-center">Please sign up</h1>
+        <div id="error-info" class="alert alert-danger" hidden>Error Info</div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="firstName">First name</label>
+                <input th:field="*{firstname}" type="text"  class="form-control" id="firstName" placeholder="" value="" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="lastName">Last name</label>
+                <input th:field="*{lastname}" type="text" class="form-control" id="lastName" placeholder="" value="" required>
+            </div>
+        </div>
 
+        <div class="mb-3">
+            <label for="username">Username</label>
+            <input th:field="*{username}" type="text" class="form-control" id="username" placeholder="Username" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="email">Email</label>
+            <input th:field="*{emailAddress}" type="email" class="form-control" id="email" placeholder="you@example.com" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="password">Password</label>
+            <input th:field="*{password}" type="password" class="form-control" id="password"
+                   placeholder="must contain digits and letters" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="password2">Re-enter password</label>
+            <input type="password" class="form-control" id="password2"
+                   placeholder="must contain digits and letters" onkeyup="checkPassword()" required>
+        </div>
+
+        <hr class="mb-3">
+        <button class="btn btn-primary btn-block" type="submit">Submit</button>
+    </form>
+</main>
+<footer th:replace="fragments/footer-fragment :: footer">
+</footer>
+<!--/*/ <th:block th:replace="fragments/head-fragment :: js"> /*/-->
+<!--import static js here-->
+<script type="application/javascript" src="../static/jQuery/jquery-3.5.1.min.js"></script>
+<script type="application/javascript" src="../static/bootstrap-4.5.2-dist/js/bootstrap.min.js"></script>
+<!--/*/ </th:block> /*/-->
+<script th:inline="javascript">
+    let errorMessage = /*[[${errorInfo}]]*/ "";
+
+    window.onload = () => {
+
+        const errorInfoEle = document.getElementById("error-info");
+
+        if (errorMessage === "") {
+            errorInfoEle.hidden = true;
+        }
+        else {
+            errorInfoEle.hidden = false;
+            errorInfoEle.innerText = errorMessage;
+        }
+    }
+
+
+    function checkPassword() {
+        const password1Ele = document.getElementById("password");
+        const password2Ele = document.getElementById("password2");
+        const errorInfoEle = document.getElementById("error-info");
+
+        if (password1Ele.value !== password2Ele.value) {
+            errorInfoEle.hidden = false;
+            errorInfoEle.innerText = "Your password doesn't match";
+        }
+        else {
+            errorInfoEle.hidden = true;
+        }
+    }
+</script>
 </body>
 </html>

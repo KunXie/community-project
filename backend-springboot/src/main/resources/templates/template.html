@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head-fragment :: head(${'template'})">
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../static/bootstrap-4.5.2-dist/css/bootstrap.min.css">
+</head>
+<body>
+<nav th:replace="fragments/nav-fragment :: nav(${7}, ${session.user})">
+    Index Nav Part
+</nav>
+<main class="container mt-5 pt-4" style="min-height: 85vh;">
+    <h1>content</h1>
+</main>
+<footer th:replace="fragments/footer-fragment :: footer">
+    Index Footer Part
+</footer>
+<!--/*/ <th:block th:replace="fragments/head-fragment :: js"> /*/-->
+<!--import static js here-->
+<script type="application/javascript" src="../static/jQuery/jquery-3.5.1.min.js"></script>
+<script type="application/javascript" src="../static/bootstrap-4.5.2-dist/js/bootstrap.min.js"></script>
+<!--/*/ </th:block> /*/-->
+</body>
+</html>

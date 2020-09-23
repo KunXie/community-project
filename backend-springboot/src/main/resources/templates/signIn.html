@@ -15,7 +15,7 @@
 </nav>
 <!--modified from template: https://getbootstrap.com/docs/4.5/examples/sign-in/-->
 <main class="signin-body" style="height: 85vh">
-    <div class="container text-center m-5">
+    <div class="container text-center m-auto">
         <form class="form-signin" method="post" th:object="${signInForm}" th:action="@{/authentication/sign-in}">
             <img class="mb-4 rounded" src="https://picsum.photos/72/72" alt="" width="72" height="72">
             <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
@@ -25,7 +25,7 @@
             <input th:field="*{password}" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
             <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
         </form>
-        <p>Don't have an Account? <a href="#" class="badge badge-light">Sign up</a></p>
+        <p>Don't have an Account? <a href="#" th:href="@{/authentication/sign-up}" class="badge badge-light">Sign up</a></p>
         <hr class="form-signin">
         <button class="form-signin btn-sm btn-dark btn-block" type="button" onclick="alert('TODO')">Sign in with GitHub</button>
     </div>

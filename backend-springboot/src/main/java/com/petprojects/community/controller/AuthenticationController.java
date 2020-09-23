@@ -1,9 +1,11 @@
 package com.petprojects.community.controller;
 
 import com.petprojects.community.dto.SignInForm;
+import com.petprojects.community.dto.SignUpForm;
 import com.petprojects.community.entity.User;
 import com.petprojects.community.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +15,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Random;
 import java.util.UUID;
 
 @Controller
@@ -27,6 +30,45 @@ public class AuthenticationController {
         this.userService = userService;
     }
 
+    @GetMapping("/sign-up")
+    public String signUp(Model model) {
+        model.addAttribute("signUpForm", new SignUpForm());
+        model.addAttribute("errorInfo", "");
+        return "signUp";
+    }
+
+    @PostMapping("/sign-up")
+    public String signUp(SignUpForm signUpForm, Model model,
+                         HttpServletRequest request, HttpServletResponse response) {
+
+        // check whether email address already exists
+        User user = userService.findUserByEmailAddress(signUpForm.getEmailAddress());
+        if (user != null) {
+            // 使用redirect model 的值传不过去
+            model.addAttribute("errorInfo", "Email Already exists");
+            return "signUp";
+        }
+
+        // create a user a save it.
+        user = new User();
+        // TODO BeanUtils.copyProperties(signUpForm, user); doesn't work
+        BeanUtils.copyProperties(signUpForm, user);;
+
+        user.setGmtCreated(System.currentTimeMillis());
+        user.setGmtModified(user.getGmtCreated());
+        String token = UUID.randomUUID().toString();
+        user.setToken(token);
+        String avatarUrl = String.format("https://picsum.photos/id/%d/460/460", new Random().nextInt(100));
+        user.setAvatarUrl(avatarUrl);
+        userService.save(user);
+
+        // set cookie and session attribute
+        Cookie tokenCookie = new Cookie("token", token);
+        response.addCookie(tokenCookie);
+        request.getSession().setAttribute("user", user);
+        return "redirect:/profile";
+    }
+
     @GetMapping("/sign-in")
     public String signIn(Model model) {
         model.addAttribute("signInForm", new SignInForm());
@@ -37,7 +79,6 @@ public class AuthenticationController {
     public String signIn(SignInForm signInForm, // it doesn't understand it as a RequestBody
                          HttpServletRequest request,
                          HttpServletResponse response, Model model) {
-        log.debug(signInForm.toString());
         User user = userService.findUserByEmailAddressAndPassword(
                 signInForm.getEmailAddress(), signInForm.getPassword());
 

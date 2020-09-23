@@ -40,6 +40,10 @@
 <footer th:replace="fragments/footer-fragment :: footer">
     Index Footer Part
 </footer>
+<!--/*/ <th:block th:replace="fragments/head-fragment :: js"> /*/-->
+<script type="application/javascript" src="../static/jQuery/jquery-3.5.1.min.js"></script>
+<script type="application/javascript" src="../static/bootstrap-4.5.2-dist/js/bootstrap.min.js"></script>
+<!--/*/ </th:block> /*/-->
 <!--function that controls which pane would be active on load-->
 <script th:inline="javascript">
     let param = /*[[${tab}]]*/ "question";

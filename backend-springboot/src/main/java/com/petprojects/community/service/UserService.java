@@ -30,6 +30,14 @@ public class UserService {
         return user;
     }
 
+    public User findUserByEmailAddress(String emailAddress) {
+        return userRepository.findUserByEmailAddress(emailAddress);
+    }
+
+    public void save(User user) {
+        userRepository.saveAndFlush(user);
+    }
+
     @Transactional
     public void updateTokenByUser(String token, User user) {
         Optional<User> userOptional = userRepository.findById(user.getId());
