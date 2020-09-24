@@ -2,21 +2,27 @@ package com.petprojects.community.controller;
 
 import com.petprojects.community.dto.SignInForm;
 import com.petprojects.community.dto.SignUpForm;
+import com.petprojects.community.dto.ValidationInput;
 import com.petprojects.community.entity.User;
+import com.petprojects.community.provider.EmailProvider;
+import com.petprojects.community.provider.UtilProvider;
 import com.petprojects.community.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 @RequestMapping("/authentication")
@@ -24,10 +30,12 @@ import java.util.UUID;
 public class AuthenticationController {
 
     private final UserService userService;
+    private final EmailProvider emailProvider;
 
     @Autowired
-    public AuthenticationController(UserService userService) {
+    public AuthenticationController(UserService userService, EmailProvider emailProvider) {
         this.userService = userService;
+        this.emailProvider = emailProvider;
     }
 
     @GetMapping("/sign-up")
@@ -51,8 +59,8 @@ public class AuthenticationController {
 
         // create a user a save it.
         user = new User();
-        // TODO BeanUtils.copyProperties(signUpForm, user); doesn't work
-        BeanUtils.copyProperties(signUpForm, user);;
+        BeanUtils.copyProperties(signUpForm, user);
+        ;
 
         user.setGmtCreated(System.currentTimeMillis());
         user.setGmtModified(user.getGmtCreated());
@@ -83,8 +91,8 @@ public class AuthenticationController {
                 signInForm.getEmailAddress(), signInForm.getPassword());
 
         if (user == null) {
-            model.addAttribute("SignInError", "email address and password doesn't match.");
-            return "redirect:/authentication/sign-in";
+            model.addAttribute("signInError", "email address and password doesn't match.");
+            return "signIn"; // 使用redirect, model 就不能用了
         }
 
         // check token, add it when necessary
@@ -112,5 +120,51 @@ public class AuthenticationController {
         response.addCookie(tokenCookie);
 
         return "redirect:/";
+    }
+
+    @GetMapping("/validation-code")
+    @ResponseBody
+    public ResponseEntity<Void> sendValidationCode(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        // set validationCode
+        String validationCode = emailProvider.sendValidationCode(user.getEmailAddress());
+        session.setAttribute("validationCode", validationCode);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/validation-code",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public Map<String, String> checkValidationCode(@RequestBody ValidationInput validationInput, // 上面的signIn method 不适用与@RequestBody
+                                                   HttpServletRequest request) {
+        Map<String, String> result = new HashMap<>();
+        HttpSession session = request.getSession();
+        String validationCode = (String) session.getAttribute("validationCode");
+        // TODO 这里的传输应该可以优化一下，不用map, 或许用status?
+        if (validationCode.equals(validationInput.getValidationCode())) {
+            result.put("result", "true");
+        } else {
+            result.put("result", "false");
+        }
+        return result;
+    }
+
+    @PostMapping("/update")
+    public String updateUserInfo(User modifiedUser, RedirectAttributes redirectAttributes, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        // TODO so far, you can only update first/lastname, username & password, avatarUrl will be supported in the future.
+        UtilProvider.copyProperties(modifiedUser, user, Arrays.asList("firstname", "lastname", "username"));
+        if (modifiedUser.getPassword() != null && modifiedUser.getPassword().length() > 0) {
+            user.setPassword(modifiedUser.getPassword());
+        }
+        user.setGmtModified(System.currentTimeMillis());
+        userService.update(user);
+        // addAttribute  参数会显示在url上
+        // addFlashAttribute Url参数不会显示在url上，redirect之后会马上删掉参数
+        redirectAttributes.addFlashAttribute("tab", "personal-info");
+        return "redirect:/profile";
     }
 }

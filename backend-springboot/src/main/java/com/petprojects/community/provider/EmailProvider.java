@@ -6,6 +6,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
+import java.util.Random;
 import java.util.UUID;
 
 @Component
@@ -17,8 +18,8 @@ public class EmailProvider{
         mailSender = javaMailSender;
     }
 
-    public static String sendValidationCode(String to) {
-        String validationCode = UUID.randomUUID().toString().replace("-", "");
+    public String sendValidationCode(String to) {
+        String validationCode = String.valueOf(new Random().nextInt(1_000_000));
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);

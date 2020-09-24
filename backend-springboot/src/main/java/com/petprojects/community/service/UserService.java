@@ -56,4 +56,8 @@ public class UserService {
         }
         return user;
     }
+
+    public User update(User user) {
+        return userRepository.saveAndFlush(user);
+    }
 }

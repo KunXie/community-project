@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../static/bootstrap-4.5.2-dist/css/bootstrap.min.css">
 </head>
 <body>
-<nav th:replace="fragments/nav-fragment :: nav(${7}, ${session.user})">
+<nav th:replace="fragments/nav-fragment :: nav(${0}, ${session.user})">
     Index Nav Part
 </nav>
 <main style="height: 85vh">
@@ -17,5 +17,8 @@
 <footer th:replace="fragments/footer-fragment :: footer">
     Index Footer Part
 </footer>
+<!--/*/ <th:block th:replace="fragments/head-fragment :: js"> /*/-->
+<!--import static js here-->
+<!--/*/ </th:block> /*/-->
 </body>
 </html>
