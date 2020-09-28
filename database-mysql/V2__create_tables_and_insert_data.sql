@@ -134,6 +134,7 @@ CREATE TABLE post (
     gmt_modified BIGINT NOT NULL,
     user_id INT NOT NULL, -- user who make this post.
     view_count INT DEFAULT 0,
+    like_count INT DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES user (id)
 )ENGINE = InnoDB;
 ALTER TABLE post AUTO_INCREMENT=50000;

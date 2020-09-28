@@ -22,7 +22,7 @@
         </form>
         <ul class="ml-auto navbar-nav nav">
             <li class="nav-item" th:if="${user}">
-                <a onclick="alert('TODO')" href="#" class="nav-link">Post</a>
+                <a th:href="@{/post/new}" href="#" class="nav-link">New</a>
             </li>
             <li class="nav-item" th:if="${user}">
                 <a th:href="@{/profile(tab='notification')}" href="#" class="nav-link">Notification <span class="badge badge-light" th:text="${notificationCount}">4</span></a>

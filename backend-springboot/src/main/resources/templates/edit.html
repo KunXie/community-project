@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head-fragment :: head(${'Publish'})">
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="../static/bootstrap-4.5.2-dist/css/bootstrap.min.css">
+    <link href="../static/fontawesome-free-5.14.0-web/css/all.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/editormd/css/editormd.css">
+
+</head>
+<body>
+<nav th:replace="fragments/nav-fragment :: nav(${0}, ${session.user})">
+    Index Nav Part
+</nav>
+<main class="container mt-5 pt-4" style="min-height: 85vh;">
+    <div class="row">
+        <!--        left side -->
+        <form class="col-xl-9 col-12" method="post" th:object="${postDraft}" th:action="@{/post/save}">
+            <!--            title row-->
+            <div class="row p-2 mb-3">
+                <div class="col-2">
+                    <label class="h4" for="title">Title</label>
+                    <span class="ml-3 badge badge-light" id="title_count">0</span>
+                    <script type="text/javascript">
+                        /* 将title的字数限制在50个字以内。*/
+                        const titleLimit = 50;
+
+                        function countTitle() {
+                            const titleEle = document.getElementById("title");
+                            const titleCountEle = document.getElementById("title_count")
+                            if (titleEle.value.length >= titleLimit) {
+                                titleEle.value = titleEle.value.substring(0, titleLimit);
+                                titleCountEle.classList.add("badge-danger"); // 默认不会重复添加和删除 class
+                                titleCountEle.classList.remove("badge-light")
+                            } else {
+                                titleCountEle.classList.remove("badge-danger");
+                                titleCountEle.classList.add("badge-light")
+                            }
+                            titleCountEle.innerText = titleEle.value.length;
+                        }
+                    </script>
+                </div>
+                <div class="col-10">
+                    <input name="id" type="text" hidden>
+                    <input th:field="*{title}" autocomplete="off" type="text" class="form-control" id="title"
+                           placeholder="Title"
+                           onkeyup="countTitle()" required>
+                </div>
+            </div>
+            <!--            content row-->
+            <div class="row mb-4">
+                <div class="col-12 p-2" id="content-editor" style="min-height: 50vh;">
+                    <textarea th:field="*{content}" id="content-area" style="display: none"></textarea>
+                </div>
+                <script th:inline="javascript" type="text/javascript">
+                    window.onload = () => {
+                        let editor = editormd("content-editor", {
+                            path: /*[[${"/editormd/lib/"}]]*/ "../static/editormd/lib/",
+                            delay: 0,
+                            placeholder: "please give details here, Markdown format is supported..."
+                        });
+                    }
+                </script>
+            </div>
+            <!--            Tag Input row-->
+            <div class="row mb-3">
+                <div class="col-2"><label class="h5" for="tag-names">Tags</label></div>
+                <div class="col-10">
+                    <input th:field="*{tagNames}" autocomplete="off" type="text" class="form-control collapsed"
+                           id="tag-names"
+                           data-toggle="collapse" data-target="#tag-pane" aria-expanded="false" aria-controls="tag-pane"
+                           placeholder="please select proper tags..." readonly required>
+                </div>
+            </div>
+            <!--            Tag option row-->
+            <div id="tag-pane" class="row collapse mb-3">
+                <div class="col-2 p-1">
+                    <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
+                        <a class="nav-link" th:each="tagType, tagTageStat : ${tagTypes}" th:id="${'tab-' + tagType.id}"
+                           th:classappend="${tagTageStat.first}? 'active'"
+                           th:text="${tagType.tagTypeName}" th:href="${'#pane-' + tagType.id}" data-toggle="pill"
+                           role="tab" aria-controls="v-pills-home" aria-selected="true">Home</a>
+                    </div>
+                </div>
+                <div class="col-10">
+                    <div class="tab-content" id="v-pills-tabContent">
+                        <div class="tab-pane fade" th:each="tagType, tagTypeStat :  ${tagTypes}"
+                             th:classappend="${tagTypeStat.first}? 'active show'"
+                             th:id="${'pane-' + tagType.id}" role="tabpanel"
+                             aria-labelledby="v-pills-home-tab">
+                            <a class="badge badge-pill badge-light m-1" th:each="tag: ${tagType.tags}"
+                               th:id="${'tag-option-' + tag.id}" th:text="${tag.tagName}"
+                               onmouseenter="onMouseEnterTagOption(this)" onmouseleave="onMouseLeaveTagOption(this)"
+                               onclick="onClickTagOption(this)">Tag Name</a>
+                        </div>
+                    </div>
+                </div>
+                <script type="text/javascript" th:inline="javascript">
+                    // id of tab should be tab-[tag_type_id]
+                    // id of pane should be pane-[tag_type_id]
+                    // id of tag option should be tag-option-[tag_id]
+                    const tagNameEle = document.getElementById("tag-names");
+                    const tagsEle = document.getElementById("tags");
+
+                    const tagNameList = [];
+
+                    function onMouseEnterTagOption(tagOptionEle) {
+                        // 将前面的都覆盖
+                        tagOptionEle.classList.add("badge-dark");
+                    }
+
+                    function onMouseLeaveTagOption(tagOptionEle) {
+                        tagOptionEle.classList.remove("badge-dark");
+                    }
+
+                    function onClickTagOption(tagOptionEle) {
+                        let index = tagNameList.indexOf(tagOptionEle.innerText);
+                        if (index > -1) { // tag already included
+                            tagOptionEle.classList.remove("badge-success");
+                            tagOptionEle.classList.add("badge-light");
+                            tagNameList.splice(index, 1);
+                        } else {
+                            tagOptionEle.classList.remove("badge-light");
+                            tagOptionEle.classList.add("badge-success");
+                            tagNameList.push(tagOptionEle.innerText);
+                        }
+                        tagNameEle.value = tagNameList.join(", ");
+                    }
+                </script>
+            </div>
+            <!--            buttons row-->
+            <div class="row mb-3">
+                <div class="col-12 d-flex justify-content-end">
+                    <!--                    TODO 以后会提供save as draft 的功能-->
+                    <!--                    <button class="btn btn-outline-info" onclick="saveHandler()">Save</button>-->
+                    <button type="submit" class="btn btn-outline-success">Publish</button>
+                </div>
+            </div>
+        </form>
+        <!--        right side-->
+        <div class="col-xl-3 col-12">
+            <h4 class="h4">Post Guide</h4>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <h5><span></span>Title</h5>
+                    <p class="text-body">Please to be brief and concise.</p>
+                    <p class="text-body">The title is limited to <span class="badge badge-info">50</span> chars.</p>
+                </li>
+                <li class="list-group-item">
+                    <h5>Content</h5>
+                    <p>Please give more details on your content.</p>
+                    <p>Markdown format is supported. <a href="https://www.markdownguide.org/" target="_blank"><i
+                            class="fa fa-link"></i>
+                        More on markdown</a></p>
+                    <p><a href="http://editor.md.ipandao.com/en.html" target="_blank"><i class="fa fa-link"></i>
+                        Editor.md</a> is used
+                        to support rich text feature.</p>
+                </li>
+                <li class="list-group-item">
+                    <h5>Tag</h5>
+                    <p>Please select proper tags to make your post useful.</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</main>
+<footer th:replace="fragments/footer-fragment :: footer">
+    Index Footer Part
+</footer>
+<!--/*/ <th:block th:replace="fragments/head-fragment :: js"> /*/-->
+<!--import static js here-->
+<script type="application/javascript" src="../static/jQuery/jquery-3.5.1.min.js"></script>
+<script type="application/javascript" src="../static/bootstrap-4.5.2-dist/js/bootstrap.min.js"></script>
+<script type="application/javascript" src="../static/editormd/editormd.min.js"></script>
+<!--/*/ </th:block> /*/-->
+</body>
+</html>

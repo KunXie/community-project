@@ -1,10 +1,14 @@
 package com.petprojects.community.entity;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "user")
 public class User {
@@ -39,4 +43,7 @@ public class User {
 
     @Column(name = "token")
     private String token;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private Set<Post> posts = new HashSet<>();
 }
