@@ -44,6 +44,7 @@ public class PostProvider {
             post = new Post();
             post.setViewCount(0);
             post.setLikeCount(0);
+            post.setReplyCount(0);
             post.setUser(user);
             post.setGmtCreated(System.currentTimeMillis());
         }

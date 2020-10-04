@@ -14,7 +14,6 @@
 </nav>
 <main class="container mt-5 pt-4" style="min-height: 85vh">
     <!--list of questions-->
-
     <div class="row">
         <!--    left side data-->
         <div class="col-md-9 col-12">
@@ -26,22 +25,22 @@
                         <!--                Interesting tab-->
                         <li class="nav-item" role="presentation">
                             <a class="nav-link active" id="interesting-tab" data-toggle="pill" href="#interesting-pane"
-                               role="tab" aria-controls="interesting-tab" aria-selected="true">Interesting</a>
+                               role="tab" aria-controls="interesting-tab" aria-selected="true" onclick="fetchPostList(0, 10, 'interesting')">Interesting</a>
                         </li>
                         <!--                Hot tab-->
                         <li class="nav-item" role="presentation">
                             <a class="nav-link" id="hot-tab" data-toggle="pill" href="#hot-pane"
-                               role="tab" aria-controls="hot-tab" aria-selected="false">Hot</a>
+                               role="tab" aria-controls="hot-tab" aria-selected="false" onclick="fetchPostList(0, 10, 'hot')">Hot</a>
                         </li>
                         <!--                Week tab-->
                         <li class="nav-item" role="presentation">
                             <a class="nav-link" id="week-tab" data-toggle="pill" href="#week-pane"
-                               role="tab" aria-controls="week-tab" aria-selected="false">Week</a>
+                               role="tab" aria-controls="week-tab" aria-selected="false" onclick="fetchPostList(0, 10, 'week')">Week</a>
                         </li>
                         <!--                Month tab-->
                         <li class="nav-item" role="presentation">
                             <a class="nav-link" id="month-tab" data-toggle="pill" href="#month-pane"
-                               role="tab" aria-controls="month-tab" aria-selected="false">Month</a>
+                               role="tab" aria-controls="month-tab" aria-selected="false" onclick="fetchPostList(0, 10, 'month')">Month</a>
                         </li>
                     </ul>
                 </div>
@@ -51,23 +50,27 @@
                         <!--                interesting pane-->
                         <div class="tab-pane fade show active" id="interesting-pane">
                             <!-- 里面是list-group + media-object-->
-                            <ul class="list-group list-group-flush">
+                            <ul id="interesting-list" class="list-group list-group-flush">
                                 <!--post list will be rendered here-->
-                                <li class="list-group-item">
-                                </li>
                             </ul>
                         </div>
                         <!--     TODO           Hot pane-->
                         <div class="tab-pane fade" id="hot-pane">
-                            <div class="alert alert-danger">TODO</div>
+                            <ul id="hot-list" class="list-group list-group-flush">
+                                <!--post list will be rendered here-->
+                            </ul>
                         </div>
                         <!--     TODO           Week pane-->
                         <div class="tab-pane fade" id="week-pane">
-                            <div class="alert alert-danger">TODO</div>
+                            <ul id="week-list" class="list-group list-group-flush">
+                                <!--post list will be rendered here-->
+                            </ul>
                         </div>
                         <!--      TODO          Month pane-->
                         <div class="tab-pane fade" id="month-pane">
-                            <div class="alert alert-danger">TODO</div>
+                            <ul id="month-list" class="list-group list-group-flush">
+                                <!--post list will be rendered here-->
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -145,15 +148,15 @@
     const postInstanceTemplate = (post) => {
         return `<li class="list-group-item">
     <div class="media">
-        <img src="${post.user.avatarUrl}" alt="user's avatar url" class="align-self-center rounded mr-3" width="64px" height="64px">
+        <img src="${post.avatarUrl}" alt="user's avatar url" class="align-self-center rounded mr-3" width="64px" height="64px">
         <div class="media-body">
-            <a class="h5" href="http://localhost:8080/post/${post.id}">${post.title}</a>
+            <a class="h5" href="http://localhost:8080/post/${post.postId}" >${post.title}</a>
             <div>` +
             post.tags.map(tag => `<a href="#" class="badge badge-pill badge-info">${tag.tagName}</a>`).join(' ')
             +
             `</div>
             <div class="text-muted">
-                <span>0</span> replies <span>${post.viewCount}</span> views
+                <span>${post.replyCount}</span> replies <span>${post.viewCount}</span> views <span>${post.likeCount}</span> likes
             </div>
         </div>
     </div>
@@ -169,15 +172,15 @@
         })
             .then(response => response.json())
             .then(data => {
-                renderPostList(data);
+                renderPostList(data, section);
                 modifyPagination(data, section);
             })
             .catch(error => console.log("error", error));
     }
 
     //TODO 这里其实没必要每次都重新渲染，直接替换值就好了, 以后有空再优化吧
-    function renderPostList(pageInfo) {
-        const postListParentEle = document.querySelector(".list-group.list-group-flush");
+    function renderPostList(pageInfo, section) {
+        const postListParentEle = document.querySelector(`#${section}-list`);
         postListParentEle.innerHTML = "";
         pageInfo.content.forEach(post => {
             postListParentEle.insertAdjacentHTML('beforeend', postInstanceTemplate(post));
@@ -186,7 +189,7 @@
 
     // TODO 这里的hard coding, 以后再优化
     function modifyPagination(pageInfo, section) {
-        const currentPage = pageInfo.number + 1;
+        const currentPage = pageInfo.number;
         const firstButton = document.querySelector("#pagination #first-button");
         const prevButton = document.querySelector("#pagination #prev-button")
         const minus2Button = document.querySelector("#pagination #n2-button");
@@ -198,24 +201,24 @@
         const lastButton = document.querySelector("#pagination #last-button");
 
         // set hidden attribute
-        firstButton.parentElement.hidden = currentPage === 1;
-        prevButton.parentElement.hidden = currentPage === 1;
-        minus2Button.parentElement.hidden = currentPage - 2 < 1;
-        minus1Button.parentElement.hidden = currentPage - 1 < 1;
-        plus1Button.parentElement.hidden = currentPage + 1 > pageInfo.totalPages;
-        plus2Button.parentElement.hidden = currentPage + 2 > pageInfo.totalPages;
-        nextButton.parentElement.hidden = currentPage === pageInfo.totalPages;
-        lastButton.parentElement.hidden = currentPage === pageInfo.totalPages;
+        firstButton.parentElement.hidden = pageInfo.first;
+        prevButton.parentElement.hidden = pageInfo.first;
+        minus2Button.parentElement.hidden = currentPage - 2 < 0;
+        minus1Button.parentElement.hidden = pageInfo.first;
+        plus1Button.parentElement.hidden = pageInfo.last;
+        plus2Button.parentElement.hidden = currentPage + 2 > pageInfo.totalPages - 1;
+        nextButton.parentElement.hidden = pageInfo.last;
+        lastButton.parentElement.hidden = pageInfo.last;
 
         // set number
-        minus2Button.textContent = currentPage - 2;
-        minus1Button.textContent = currentPage - 1;
-        curButton.textContent = currentPage;
-        plus1Button.textContent = currentPage + 1;
-        plus2Button.textContent = currentPage + 2;
+        minus2Button.textContent = currentPage - 1;
+        minus1Button.textContent = currentPage;
+        curButton.textContent = currentPage + 1;
+        plus1Button.textContent = currentPage + 2;
+        plus2Button.textContent = currentPage + 3;
 
         // set onclick
-        firstButton.setAttribute("onClick", `fetchPostList(1, 10, '${section}')`);
+        firstButton.setAttribute("onClick", `fetchPostList(0, 10, '${section}')`);
         prevButton.setAttribute("onClick", `fetchPostList(${currentPage-1}, 10, '${section}')`);
         minus2Button.setAttribute("onClick", `fetchPostList(${currentPage-2}, 10, '${section}')`);
         minus1Button.setAttribute("onClick", `fetchPostList(${currentPage-1}, 10, '${section}')`)
@@ -223,11 +226,11 @@
         plus1Button.setAttribute("onClick", `fetchPostList(${currentPage+1}, 10, '${section}')`);
         plus2Button.setAttribute("onClick", `fetchPostList(${currentPage+2}, 10, '${section}')`);
         nextButton.setAttribute("onClick", `fetchPostList(${currentPage+1}, 10, '${section}')`);
-        lastButton.setAttribute("onClick", `fetchPostList(${pageInfo.totalPages}, 10, '${section}')`);
+        lastButton.setAttribute("onClick", `fetchPostList(${pageInfo.totalPages - 1}, 10, '${section}')`);
     }
 
     window.onload = () => {
-        fetchPostList(1, 10, "interesting");
+        fetchPostList(0, 10, "interesting");
     }
 </script>
 </body>

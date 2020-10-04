@@ -1,6 +1,9 @@
 package com.petprojects.community.controller;
 
 import com.petprojects.community.entity.Post;
+import com.petprojects.community.entity.PostList;
+import com.petprojects.community.enums.IndexTabEnum;
+import com.petprojects.community.repository.PostListRepository;
 import com.petprojects.community.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,14 +20,33 @@ import org.springframework.web.bind.annotation.*;
 public class IndexController {
 
     private final PostRepository postRepository;
+    private final PostListRepository postListRepository;
 
     @Autowired
-    public IndexController(PostRepository postRepository) {
+    public IndexController(PostRepository postRepository, PostListRepository postListRepository) {
         this.postRepository = postRepository;
+        this.postListRepository = postListRepository;
     }
 
     @GetMapping
-    public String index() {
+    public String index(@RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
+                        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+                        @RequestParam(value = "section", defaultValue = "interesting") String section, Model model) {
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("viewCount").descending().and(Sort.by("likeCount").descending()));
+        Page<PostList> postLists;
+        if (section.equals(IndexTabEnum.HOT.getValue())) {
+            postLists = postListRepository.findAll(pageable);
+        } else if (section.equals(IndexTabEnum.WEEK.getValue())) {
+            postLists = postListRepository.findAllByGmtModifiedGreaterThanEqual(System.currentTimeMillis() - 7 * 1000 * 24 * 60 * 60L, pageable);
+        } else if (section.equals(IndexTabEnum.MONTH.getValue())) {
+            postLists = postListRepository.findAllByGmtModifiedGreaterThanEqual(System.currentTimeMillis() - 30 * 1000 * 24 * 60 * 60L, pageable);
+        } else { // "interesting"
+            pageable = PageRequest.of(pageNumber, pageSize, Sort.by("gmtModified").descending().and(Sort.by("replyCount").descending()));
+            postLists = postListRepository.findAll(pageable);
+        }
+
+        model.addAttribute("pageInfo", postLists);
         return "index";
     }
 
@@ -33,11 +55,22 @@ public class IndexController {
     @GetMapping(value = "/posts",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Page<Post> getPostList(@RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
-                                  @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
-                                  @RequestParam(value = "section", defaultValue = "interesting") String section) {
-        // 这个page number 前端以1开头，后端以0开头
-        Pageable pageable = PageRequest.of(pageNo-1, size, Sort.by("gmtModified").descending());
-        return postRepository.findAll(pageable);
+    public Page<PostList> getPostList(@RequestParam(value = "pageNo", defaultValue = "0") Integer pageNumber,
+                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+                                      @RequestParam(value = "section", defaultValue = "interesting") String section) {
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("viewCount").descending().and(Sort.by("likeCount").descending()));
+        Page<PostList> postLists;
+        if (section.equals(IndexTabEnum.HOT.getValue())) {
+            postLists = postListRepository.findAll(pageable);
+        } else if (section.equals(IndexTabEnum.WEEK.getValue())) {
+            postLists = postListRepository.findAllByGmtModifiedGreaterThanEqual(System.currentTimeMillis() - 7 * 1000 * 24 * 60 * 60L, pageable);
+        } else if (section.equals(IndexTabEnum.MONTH.getValue())) {
+            postLists = postListRepository.findAllByGmtModifiedGreaterThanEqual(System.currentTimeMillis() - 30 * 1000 * 24 * 60 * 60L, pageable);
+        } else { // "interesting"
+            pageable = PageRequest.of(pageNumber, pageSize, Sort.by("gmtModified").descending().and(Sort.by("replyCount").descending()));
+            postLists = postListRepository.findAll(pageable);
+        }
+        return postLists;
     }
 }

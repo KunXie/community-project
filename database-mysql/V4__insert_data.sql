@@ -88,17 +88,50 @@ VALUES
 INSERT INTO post
 (title, content, gmt_created, gmt_modified, user_id, view_count, like_count)
 VALUES
-('test post11', '# test<br>## head2', 1600384525000, 1600384525000, 1, 0, 0),
-('test post21', '# test<br>## head2', 1600384525000, 1600384525000, 1, 0, 0),
-('test post31', '# test<br>## head2', 1600384525000, 1600384525000, 1, 0, 0),
-('test post41', '# test<br>## head2', 1600384525000, 1600384525000, 1, 0, 0),
-('test post51', '# test<br>## head2', 1600384525000, 1600384525000, 1, 0, 0),
-('test post61', '# test<br>## head2', 1600384525000, 1600384525000, 1, 0, 0),
-('test post71', '# test<br>## head2', 1600384525000, 1600384525000, 1, 0, 0),
-('test post81', '# test<br>## head2', 1600384525000, 1600384525000, 1, 0, 0),
-('test post91', '# test<br>## head2', 1600384525000, 1600384525000, 1, 0, 0),
-('test post101', '# test<br>## head2', 1600384525000, 1600384525000, 1, 0, 0),
-('test post111', '# test<br>## head2', 1600384525000, 1600384525000, 1, 0, 0),
+('test post11', '# test
+```python
+print("hello world!");
+```', 1600384525000, 1600384525000, 1, 0, 0),
+('test post21', '# test2
+```python
+print("hello world!");
+```', 1600384525000, 1600384525000, 1, 0, 0),
+('test post31', '# test2
+```python
+print("hello world!");
+```', 1600384525000, 1600384525000, 1, 0, 0),
+('test post41', '# test41
+```python
+print("hello world!");
+```', 1600384525000, 1600384525000, 1, 0, 0),
+('test post51', '# test51
+```python
+print("hello world!");
+```', 1600384525000, 1600384525000, 1, 0, 0),
+('test post61', '# test61
+```python
+print("hello world!");
+```', 1600384525000, 1600384525000, 1, 0, 0),
+('test post71', '# test71
+```python
+print("hello world!");
+```', 1600384525000, 1600384525000, 1, 0, 0),
+('test post81', '# test81
+```python
+print("hello world!");
+```', 1600384525000, 1600384525000, 1, 0, 0),
+('test post91', '# test91
+```python
+print("hello world!");
+```', 1600384525000, 1600384525000, 1, 0, 0),
+('test post101', '# test101
+```python
+print("hello world!");
+```', 1600384525000, 1600384525000, 1, 0, 0),
+('test post111', '# test111
+```python
+print("hello world!");
+```', 1600384525000, 1600384525000, 1, 0, 0),
 ('test post121', '# test<br>## head2', 1600384525000, 1600384525000, 1, 0, 0),
 ('test post131', '# test<br>## head2', 1600384525000, 1600384525000, 1, 0, 0),
 ('test post141', '# test<br>## head2', 1600384525000, 1600384525000, 1, 0, 0),
