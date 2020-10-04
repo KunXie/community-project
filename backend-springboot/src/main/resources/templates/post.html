@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head-fragment :: head(${'Post'})">
+    <meta charset="UTF-8">
+    <title>Post</title>
+    <link rel="stylesheet" href="../static/bootstrap-4.5.2-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/fontawesome-free-5.14.0-web/css/all.css">
+    <link rel="stylesheet" href="../static/editormd/css/editormd.min.css">
+    <link rel="stylesheet" href="../static/editormd/css/editormd.preview.min.css">
+</head>
+<body>
+<nav th:replace="fragments/nav-fragment :: nav(${0}, ${session.user})">
+    Index Nav Part
+</nav>
+<main class="container mt-5 pt-4" style="min-height: 85vh;">
+    <div class="row">
+        <!--left side data-->
+        <div class="col-md-9 col-12">
+            <!--title row-->
+            <h5 th:text="${post.title}">Question title</h5>
+            <!--top info row-->
+            <div class="font-weight-light text-muted small">
+                Author: <span th:text="${post.user.username}"> author name </span> |
+                Published: <span th:text="${post.   }"> 2020-09-27 </span> |
+                Viewed: <span> 30 </span>
+            </div>
+            <hr>
+            <!--content row-->
+            <div id="post-content" class="col-12 markdown-body editormd-html-preview">
+                <!-- Server-side output Markdown text -->
+                <textarea style="display:none;">### Hello World
+```
+print("hello world");
+```
+                </textarea>
+            </div>
+            <hr>
+            <!--TODO bottom info row-->
+            <div class="row">
+                <!--TODO tag list-->
+                <div class="col-7">
+                    <a href="#" class="badge badge-pill badge-info">php</a>
+                    <a href="#" class="badge badge-pill badge-info">javascript</a>
+                    <a href="#" class="badge badge-pill badge-info">java</a>
+                    <a href="#" class="badge badge-pill badge-info">spring</a>
+                    <a href="#" class="badge badge-pill badge-info">php</a>
+                    <a href="#" class="badge badge-pill badge-info">javascript</a>
+                    <a href="#" class="badge badge-pill badge-info">java</a>
+                    <a href="#" class="badge badge-pill badge-info">spring</a>
+                </div>
+                <div class="col-5 text-muted font-weight-light small">
+                    edited: <span>2020-09-20 13:30</span>
+                </div>
+            </div>
+            <hr>
+            <!--TODO Reply count row, also reply collapse-->
+            <div>
+                <a class="btn btn-outline-info" data-toggle="collapse" href="#replies-list" role="button"
+                   aria-expanded="false" aria-controls="replies-list"><span>10</span> Replies</a>
+                <hr>
+            </div>
+            <!--TODO Reply list row: media list-->
+            <div class="row collapse" id="replies-list">
+                <!--five replies per page-->
+                <ul class="list-unstyled mt-3">
+                    <!--one reply instance-->
+                    <li class="media mb-4" id="reply-{1}">
+                        <img src="https://picsum.photos/300/200" class="mr-3 rounded" alt="user's avatar url"
+                             width="40px"
+                             height="40px">
+                        <div class="media-body">
+                            <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                            <div id="reply-{1}-content" class="markdown-body editormd-html-preview">
+                                Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
+                                sollicitudin.
+                                Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum
+                                nunc
+                                ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+                            </div>
+                            <!--TODO support markdown for reply content-->
+                            <script type="text/javascript">
+                                $(function () {
+                                    $(function () {
+                                        editormd.markdownToHTML("reply-{id}-content", {});
+                                    });
+                                });
+                            </script>
+                            <!--TODO reply info row-->
+                            <div class="row">
+                                <div class="col-7">
+                                    <i class="far fa-comment" onclick="toggleSubReplies(this)"></i>
+                                    <span class="text-muted font-weight-light">12</span>
+                                    <script>
+                                        /* far 是隐藏二级评论 fas 是展示二级评论，且二级评论不支持markdown语法 */
+                                        function toggleSubReplies(iconEle) {
+                                            iconEle.classList.toggle("far");
+                                            iconEle.classList.toggle("fas");
+                                            /*TODO 这里是拿到二级评论的数据*/
+                                            const subReplyListEle = document.querySelector("#sub-reply-list-1");
+                                            console.log("subReplyEle", subReplyListEle);
+                                            subReplyListEle.hidden = !subReplyListEle.hidden;
+                                        }
+                                    </script>
+                                </div>
+                                <div class="col-5 text-muted font-weight-light small">
+                                    replied: <span>2020-09-20 13:30</span>
+                                </div>
+                            </div>
+                            <!--TODO sub replies row TODO 这里就不涉pagination了 同样的东西已经实现过一遍了-->
+                            <div class="row" id="sub-reply-list-1" hidden>
+                                <!--TODO sub replies list: -->
+                                <ul class="list-unstyled mt-3">
+                                    <!--one sub-reply instance-->
+                                    <li class="media mb-4" id="sub-reply-{11}">
+                                        <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                             alt="user's avatar url"
+                                             width="40px"
+                                             height="40px">
+                                        <div class="media-body">
+                                            <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                            <div id="sub-reply-{11}-content" class="font-weight-light small">
+                                                Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                                ante
+                                                sollicitudin.
+                                            </div>
+                                            <!--TODO reply info row-->
+                                            <div class="text-muted font-weight-lighter small pull-right">
+                                                replied: <span>2020-09-20 13:30</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <!--one sub-reply instance-->
+                                    <li class="media mb-4" id="sub-reply-{12}">
+                                        <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                             alt="user's avatar url"
+                                             width="40px"
+                                             height="40px">
+                                        <div class="media-body">
+                                            <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                            <div id="sub-reply-{12}-content" class="font-weight-light small">
+                                                Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                                ante
+                                                sollicitudin.
+                                            </div>
+                                            <!--TODO reply info row-->
+                                            <div class="text-muted font-weight-lighter small pull-right">
+                                                replied: <span>2020-09-20 13:30</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <!--one sub-reply instance-->
+                                    <li class="media mb-4" id="sub-reply-{13}">
+                                        <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                             alt="user's avatar url"
+                                             width="40px"
+                                             height="40px">
+                                        <div class="media-body">
+                                            <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                            <div id="sub-reply-{13}-content" class="font-weight-light small">
+                                                Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                                ante
+                                                sollicitudin.
+                                            </div>
+                                            <!--TODO reply info row-->
+                                            <div class="text-muted font-weight-lighter small pull-right">
+                                                replied: <span>2020-09-20 13:30</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <!--one sub-reply instance-->
+                                    <li class="media mb-4" id="sub-reply-{14}">
+                                        <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                             alt="user's avatar url"
+                                             width="40px"
+                                             height="40px">
+                                        <div class="media-body">
+                                            <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                            <div id="sub-reply-{14}-content" class="font-weight-light small">
+                                                Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                                ante
+                                                sollicitudin.
+                                            </div>
+                                            <!--TODO reply info row-->
+                                            <div class="text-muted font-weight-lighter small pull-right">
+                                                replied: <span>2020-09-20 13:30</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <!--one sub-reply instance-->
+                                    <li class="media mb-4" id="sub-reply-{15}">
+                                        <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                             alt="user's avatar url"
+                                             width="40px"
+                                             height="40px">
+                                        <div class="media-body">
+                                            <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                            <div id="sub-reply-{15}-content" class="font-weight-light small">
+                                                Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                                ante
+                                                sollicitudin.
+                                            </div>
+                                            <!--TODO reply info row-->
+                                            <div class="text-muted font-weight-lighter small pull-right">
+                                                replied: <span>2020-09-20 13:30</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <!--TODO sub reply input-->
+                                <div class="col-12">
+                                    <form action="" class="form-inline">
+                                        <div class="input-group" style="width: 100%">
+                                            <label for="sub-reply-to-{1}" class="sr-only">Sub-reply content</label>
+                                            <input id="sub-reply-to-{1}" type="text" class="form-control d-inline-block"
+                                                   placeholder="reply to this comment...">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-success" type="submit">Reply</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </li>
+                    <li class="media mb-4" id="reply-{2}">
+                        <img src="https://picsum.photos/300/200" class="mr-3 rounded" alt="user's avatar url"
+                             width="40px"
+                             height="40px">
+                        <div class="media-body">
+                            <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                            <div id="reply-{2}-content" class="markdown-body editormd-html-preview">
+                                Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
+                                sollicitudin.
+                                Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum
+                                nunc
+                                ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+                            </div>
+                            <!--TODO support markdown for reply content-->
+                            <script type="text/javascript">
+                                $(function () {
+                                    $(function () {
+                                        editormd.markdownToHTML("reply-{id}-content", {});
+                                    });
+                                });
+                            </script>
+                            <!--TODO reply info row-->
+                            <div class="row">
+                                <div class="col-7">
+                                    <i id="reply-{2}-icon" class="far fa-comment" onclick="toggleSubReplies(this)"></i>
+                                    <span class="text-muted font-weight-light">12</span>
+                                </div>
+                                <div class="col-5 text-muted font-weight-light small">
+                                    replied: <span>2020-09-20 13:30</span>
+                                </div>
+                            </div>
+                            <!--TODO sub replies row TODO 这里就不涉pagination了 同样的东西已经实现过一遍了-->
+                            <!--TODO sub replies list: -->
+                            <ul class="list-unstyled mt-3">
+                                <!--one sub-reply instance-->
+                                <li class="media mb-4" id="sub-reply-{21}">
+                                    <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                         alt="user's avatar url"
+                                         width="40px"
+                                         height="40px">
+                                    <div class="media-body">
+                                        <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                        <div id="sub-reply-{21}-content" class="font-weight-light small">
+                                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                            ante
+                                            sollicitudin.
+                                        </div>
+                                        <!--TODO reply info row-->
+                                        <div class="text-muted font-weight-lighter small pull-right">
+                                            replied: <span>2020-09-20 13:30</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="media mb-4" id="sub-reply-{22}">
+                                    <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                         alt="user's avatar url"
+                                         width="40px"
+                                         height="40px">
+                                    <div class="media-body">
+                                        <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                        <div id="sub-reply-{22}-content" class="font-weight-light small">
+                                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                            ante
+                                            sollicitudin.
+                                        </div>
+                                        <!--TODO reply info row-->
+                                        <div class="text-muted font-weight-lighter small pull-right">
+                                            replied: <span>2020-09-20 13:30</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="media mb-4" id="sub-reply-{23}">
+                                    <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                         alt="user's avatar url"
+                                         width="40px"
+                                         height="40px">
+                                    <div class="media-body">
+                                        <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                        <div id="sub-reply-{23}-content" class="font-weight-light small">
+                                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                            ante
+                                            sollicitudin.
+                                        </div>
+                                        <!--TODO reply info row-->
+                                        <div class="text-muted font-weight-lighter small pull-right">
+                                            replied: <span>2020-09-20 13:30</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="media mb-4" id="sub-reply-{24}">
+                                    <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                         alt="user's avatar url"
+                                         width="40px"
+                                         height="40px">
+                                    <div class="media-body">
+                                        <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                        <div id="sub-reply-{24}-content" class="font-weight-light small">
+                                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                            ante
+                                            sollicitudin.
+                                        </div>
+                                        <!--TODO reply info row-->
+                                        <div class="text-muted font-weight-lighter small pull-right">
+                                            replied: <span>2020-09-20 13:30</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="media mb-4" id="sub-reply-{25}">
+                                    <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                         alt="user's avatar url"
+                                         width="40px"
+                                         height="40px">
+                                    <div class="media-body">
+                                        <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                        <div id="sub-reply-{25}-content" class="font-weight-light small">
+                                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                            ante
+                                            sollicitudin.
+                                        </div>
+                                        <!--TODO reply info row-->
+                                        <div class="text-muted font-weight-lighter small pull-right">
+                                            replied: <span>2020-09-20 13:30</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                            <!--TODO sub reply input-->
+                            <form action="" class="form-inline">
+                                <div class="input-group" style="width: 100%">
+                                    <label for="sub-reply-to-{2}" class="sr-only">Sub-reply content</label>
+                                    <input id="sub-reply-to-{2}" type="text" class="form-control d-inline-block"
+                                           placeholder="reply to this comment...">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-success" type="submit">Reply</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </li>
+                    <li class="media mb-4" id="reply-{3}">
+                        <img src="https://picsum.photos/300/200" class="mr-3 rounded" alt="user's avatar url"
+                             width="40px"
+                             height="40px">
+                        <div class="media-body">
+                            <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                            <div id="reply-{3}-content" class="markdown-body editormd-html-preview">
+                                Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
+                                sollicitudin.
+                                Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum
+                                nunc
+                                ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+                            </div>
+                            <!--TODO support markdown for reply content-->
+                            <script type="text/javascript">
+                                $(function () {
+                                    $(function () {
+                                        editormd.markdownToHTML("reply-{id}-content", {});
+                                    });
+                                });
+                            </script>
+                            <!--TODO reply info row-->
+                            <div class="row">
+                                <div class="col-7">
+                                    <i id="reply-{3}-icon" class="far fa-comment" onclick="toggleSubReplies(this)"></i>
+                                    <span class="text-muted font-weight-light">12</span>
+                                </div>
+                                <div class="col-5 text-muted font-weight-light small">
+                                    replied: <span>2020-09-20 13:30</span>
+                                </div>
+                            </div>
+                            <!--TODO sub replies row TODO 这里就不涉pagination了 同样的东西已经实现过一遍了-->
+                            <!--TODO sub replies list: -->
+                            <ul class="list-unstyled mt-3">
+                                <!--one sub-reply instance-->
+                                <li class="media mb-4" id="sub-reply-{31}">
+                                    <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                         alt="user's avatar url"
+                                         width="40px"
+                                         height="40px">
+                                    <div class="media-body">
+                                        <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                        <div id="sub-reply-{31}-content" class="font-weight-light small">
+                                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                            ante
+                                            sollicitudin.
+                                        </div>
+                                        <!--TODO reply info row-->
+                                        <div class="text-muted font-weight-lighter small pull-right">
+                                            replied: <span>2020-09-20 13:30</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="media mb-4" id="sub-reply-{32}">
+                                    <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                         alt="user's avatar url"
+                                         width="40px"
+                                         height="40px">
+                                    <div class="media-body">
+                                        <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                        <div id="sub-reply-{32}-content" class="font-weight-light small">
+                                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                            ante
+                                            sollicitudin.
+                                        </div>
+                                        <!--TODO reply info row-->
+                                        <div class="text-muted font-weight-lighter small pull-right">
+                                            replied: <span>2020-09-20 13:30</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="media mb-4" id="sub-reply-{33}">
+                                    <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                         alt="user's avatar url"
+                                         width="40px"
+                                         height="40px">
+                                    <div class="media-body">
+                                        <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                        <div id="sub-reply-{33}-content" class="font-weight-light small">
+                                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                            ante
+                                            sollicitudin.
+                                        </div>
+                                        <!--TODO reply info row-->
+                                        <div class="text-muted font-weight-lighter small pull-right">
+                                            replied: <span>2020-09-20 13:30</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="media mb-4" id="sub-reply-{34}">
+                                    <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                         alt="user's avatar url"
+                                         width="40px"
+                                         height="40px">
+                                    <div class="media-body">
+                                        <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                        <div id="sub-reply-{34}-content" class="font-weight-light small">
+                                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                            ante
+                                            sollicitudin.
+                                        </div>
+                                        <!--TODO reply info row-->
+                                        <div class="text-muted font-weight-lighter small pull-right">
+                                            replied: <span>2020-09-20 13:30</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="media mb-4" id="sub-reply-{35}">
+                                    <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                         alt="user's avatar url"
+                                         width="40px"
+                                         height="40px">
+                                    <div class="media-body">
+                                        <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                        <div id="sub-reply-{35}-content" class="font-weight-light small">
+                                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                            ante
+                                            sollicitudin.
+                                        </div>
+                                        <!--TODO reply info row-->
+                                        <div class="text-muted font-weight-lighter small pull-right">
+                                            replied: <span>2020-09-20 13:30</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                            <!--TODO sub reply input-->
+                            <form action="" class="form-inline">
+                                <div class="input-group" style="width: 100%">
+                                    <label for="sub-reply-to-{3}" class="sr-only">Sub-reply content</label>
+                                    <input id="sub-reply-to-{3}" type="text" class="form-control d-inline-block"
+                                           placeholder="reply to this comment...">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-success" type="submit">Reply</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </li>
+                    <li class="media mb-4" id="reply-{4}">
+                        <img src="https://picsum.photos/300/200" class="mr-3 rounded" alt="user's avatar url"
+                             width="40px"
+                             height="40px">
+                        <div class="media-body">
+                            <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                            <div id="reply-{id}-content" class="markdown-body editormd-html-preview">
+                                Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
+                                sollicitudin.
+                                Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum
+                                nunc
+                                ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+                            </div>
+
+                            <!--TODO reply info row-->
+                            <div class="row">
+                                <div class="col-7">
+                                    <i id="reply-{4}-icon" class="far fa-comment" onclick="toggleSubReplies(this)"></i>
+                                    <span class="text-muted font-weight-light">12</span>
+                                </div>
+                                <div class="col-5 text-muted font-weight-light small">
+                                    replied: <span>2020-09-20 13:30</span>
+                                </div>
+                            </div>
+                            <!--TODO sub replies row TODO 这里就不涉pagination了 同样的东西已经实现过一遍了-->
+                            <!--TODO sub replies list: -->
+                            <ul class="list-unstyled mt-3">
+                                <!--one sub-reply instance-->
+                                <li class="media mb-4" id="sub-reply-{41}">
+                                    <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                         alt="user's avatar url"
+                                         width="40px"
+                                         height="40px">
+                                    <div class="media-body">
+                                        <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                        <div id="sub-reply-{41}-content" class="font-weight-light small">
+                                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                            ante
+                                            sollicitudin.
+                                        </div>
+                                        <!--TODO reply info row-->
+                                        <div class="text-muted font-weight-lighter small pull-right">
+                                            replied: <span>2020-09-20 13:30</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="media mb-4" id="sub-reply-{42}">
+                                    <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                         alt="user's avatar url"
+                                         width="40px"
+                                         height="40px">
+                                    <div class="media-body">
+                                        <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                        <div id="sub-reply-{42}-content" class="font-weight-light small">
+                                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                            ante
+                                            sollicitudin.
+                                        </div>
+                                        <!--TODO reply info row-->
+                                        <div class="text-muted font-weight-lighter small pull-right">
+                                            replied: <span>2020-09-20 13:30</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="media mb-4" id="sub-reply-{43}">
+                                    <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                         alt="user's avatar url"
+                                         width="40px"
+                                         height="40px">
+                                    <div class="media-body">
+                                        <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                        <div id="sub-reply-{43}-content" class="font-weight-light small">
+                                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                            ante
+                                            sollicitudin.
+                                        </div>
+                                        <!--TODO reply info row-->
+                                        <div class="text-muted font-weight-lighter small pull-right">
+                                            replied: <span>2020-09-20 13:30</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="media mb-4" id="sub-reply-{44}">
+                                    <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                         alt="user's avatar url"
+                                         width="40px"
+                                         height="40px">
+                                    <div class="media-body">
+                                        <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                        <div id="sub-reply-{44}-content" class="font-weight-light small">
+                                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                            ante
+                                            sollicitudin.
+                                        </div>
+                                        <!--TODO reply info row-->
+                                        <div class="text-muted font-weight-lighter small pull-right">
+                                            replied: <span>2020-09-20 13:30</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="media mb-4" id="sub-reply-{45}">
+                                    <img src="https://picsum.photos/300/200" class="mr-3 rounded"
+                                         alt="user's avatar url"
+                                         width="40px"
+                                         height="40px">
+                                    <div class="media-body">
+                                        <h6 class="h6 mt-0 mb-1">Replier's username</h6>
+                                        <div id="sub-reply-{45}-content" class="font-weight-light small">
+                                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
+                                            ante
+                                            sollicitudin.
+                                        </div>
+                                        <!--TODO reply info row-->
+                                        <div class="text-muted font-weight-lighter small pull-right">
+                                            replied: <span>2020-09-20 13:30</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                            <!--TODO sub reply input-->
+                            <form action="" class="form-inline">
+                                <div class="input-group" style="width: 100%">
+                                    <label for="sub-reply-to-{4}" class="sr-only">Sub-reply content</label>
+                                    <input id="sub-reply-to-{4}" type="text" class="form-control d-inline-block"
+                                           placeholder="reply to this comment...">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-success" type="submit">Reply</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </li>
+                </ul>
+                <!--replies' pagination-->
+                <nav class="mt-4" aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <!-- first button-->
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <!--previous button-->
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <span aria-hidden="true">&lt;</span>
+                            </a>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <!--next button-->
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&gt;</span>
+                            </a>
+                        </li>
+                        <!-- last button-->
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <hr>
+            </div>
+
+            <!--Reply textarea row-->
+            <div class="row my-4">
+                <h6 class="h6">Your Reply: </h6>
+                <div class="col-12" id="reply-content-editor" style="min-height: 30vh;">
+                    <textarea id="reply-content-area" style="display: none"></textarea>
+                </div>
+            </div>
+        </div>
+        <!--TODO right side data-->
+        <div class="col-md-3 col-12">
+            <div>
+                <div class="card" style="width: 18rem;">
+                    <div class="card-header">
+                        <i class="fa fa-list-alt"></i> Related Questions
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="#" class="list-group-item list-group-item-action small">Cras justo odio</a>
+                        <a href="#" class="list-group-item list-group-item-action small">Dapibus ac facilisis in</a>
+                        <a href="#" class="list-group-item list-group-item-action small">Vestibulum at eros</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="fragments/footer-fragment :: footer">
+    Index Footer Part
+</footer>
+<!--/*/ <th:block th:replace="fragments/head-fragment :: js"> /*/-->
+<!--import static js here-->
+<script type="application/javascript" src="../static/jQuery/jquery-3.5.1.min.js"></script>
+<script type="application/javascript" src="../static/bootstrap-4.5.2-dist/js/bootstrap.min.js"></script>
+<script type="application/javascript" src="../static/editormd/editormd.min.js"></script>
+<script type="application/javascript" src="../static/editormd/lib/marked.min.js"></script>
+<script type="application/javascript" src="../static/editormd/lib/prettify.min.js"></script>
+<script type="text/javascript">
+    window.onload = () => {
+        const showPostContent = editormd.markdownToHTML("post-content", {});
+
+        let replyContentEditor = editormd("reply-content-editor", {
+            path: /*[[${"/editormd/lib/"}]]*/ "../static/editormd/lib/",
+            delay: 0,
+            placeholder: "please give your reply here...",
+            toolbarIcons: "simple"
+        });
+    }
+</script>
+<!--/*/ </th:block> /*/-->
+</body>
+</html>

@@ -1,6 +1,5 @@
 package com.petprojects.community.entity;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

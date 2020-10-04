@@ -5,7 +5,6 @@ import com.petprojects.community.entity.Post;
 import com.petprojects.community.entity.TagType;
 import com.petprojects.community.entity.User;
 import com.petprojects.community.provider.PostProvider;
-import com.petprojects.community.repository.PostRepository;
 import com.petprojects.community.repository.TagTypeRepository;
 import com.petprojects.community.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +40,15 @@ public class PostController {
         return "edit";
     }
 
-    @GetMapping("/{id}") // modify an existing post whose id = {id}
-    public String oldPost(Model model, @PathVariable(name = "id") Integer postId) {
+    @GetMapping("/{id}")
+    public String showPost(@PathVariable(name = "id") Integer postId, Model model) {
+        Post post = postService.findById(postId);
+        model.addAttribute("post", post);
+        return "post";
+    }
+
+    @GetMapping("/edit/{id}") // modify an existing post whose id = {id}
+    public String editExitingPost(Model model, @PathVariable(name = "id") Integer postId) {
         List<TagType> tagTypes = tagTypeRepository.findAll();
         model.addAttribute("tagTypes", tagTypes);
 

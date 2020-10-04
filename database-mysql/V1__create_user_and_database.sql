@@ -6,7 +6,7 @@
 -- create an account for this project
 -- username: community-project
 -- password: community-project
-CREATE USER 'community-project'@'localhost' IDENTIFIED BY 'community-project';
+CREATE USER IF NOT EXISTS 'community-project'@'localhost' IDENTIFIED BY 'community-project';
 
 -- create a database
 DROP DATABASE IF EXISTS qacommunity;
