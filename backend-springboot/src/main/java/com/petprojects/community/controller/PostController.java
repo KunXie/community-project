@@ -1,11 +1,9 @@
 package com.petprojects.community.controller;
 
 import com.petprojects.community.dto.PostDraft;
-import com.petprojects.community.entity.Post;
-import com.petprojects.community.entity.PrimaryReply;
-import com.petprojects.community.entity.TagType;
-import com.petprojects.community.entity.User;
+import com.petprojects.community.entity.*;
 import com.petprojects.community.provider.PostProvider;
+import com.petprojects.community.repository.LikePostRepository;
 import com.petprojects.community.repository.PostRepository;
 import com.petprojects.community.repository.PrimaryReplyRepository;
 import com.petprojects.community.repository.TagTypeRepository;
@@ -28,14 +26,15 @@ public class PostController {
     private final PostRepository postRepository;
     private final PostProvider postProvider;
     private final PrimaryReplyRepository primaryReplyRepository;
+    private final LikePostRepository likePostRepository;
 
     @Autowired
-    public PostController(TagTypeRepository tagTypeRepository, PostRepository postRepository,
-                          PostProvider postProvider, PrimaryReplyRepository primaryReplyRepository) {
+    public PostController(TagTypeRepository tagTypeRepository, PostRepository postRepository, PostProvider postProvider, PrimaryReplyRepository primaryReplyRepository, LikePostRepository likePostRepository) {
         this.tagTypeRepository = tagTypeRepository;
         this.postRepository = postRepository;
         this.postProvider = postProvider;
         this.primaryReplyRepository = primaryReplyRepository;
+        this.likePostRepository = likePostRepository;
     }
 
     @GetMapping("/new") // create a new post
@@ -50,7 +49,17 @@ public class PostController {
     public String showPost(@PathVariable(name = "id") Integer postId,
                            @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
                            @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize,
-                           Model model) {
+                           Model model,
+                           HttpSession httpSession) {
+        User user = (User) httpSession.getAttribute("user");
+        if (user != null) {
+            LikePost likePost = likePostRepository.find(user.getId(), postId);
+            model.addAttribute("likePost", likePost);
+
+            System.out.println("LikePost : " + likePost);
+            System.out.println("user: " + user.getId());
+        }
+
         postRepository.incrementViewCount(postId);
         Post post = postRepository.findById(postId).orElse(null);
         model.addAttribute("post", post);
@@ -58,6 +67,19 @@ public class PostController {
         Page<PrimaryReply> primaryReplies = primaryReplyRepository.findAllByPost(post, pageable);
         model.addAttribute("primaryReplies", primaryReplies);
         return "post";
+    }
+
+    @GetMapping("/toggleLikePost")
+    public String toggleLikePost(@RequestParam("userId") Integer userId, @RequestParam("postId") Integer postId ) {
+        LikePost likePost = likePostRepository.find(userId, postId);
+        if (likePost == null) {
+            likePost = new LikePost(userId, postId);
+            likePostRepository.save(likePost);
+        }
+        else {
+            likePostRepository.delete(likePost);
+        }
+        return "redirect:/post/" + postId;
     }
 
     @GetMapping("/edit/{id}") // modify an existing post whose id = {id}

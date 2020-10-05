@@ -23,7 +23,13 @@
                 Author: <span th:text="${post.user.username}"> author name </span> |
                 Published: <span th:text="${#dates.format(post.gmtCreated, 'yyyy-MM-dd HH:mm')}"> 2020-09-27 </span> |
                 Viewed: <span th:text="${post.viewCount}"> 30 </span> |
-                liked: <span th:text="${post.likeCount}">999</span>
+                <!--这个button如果没有登录就是disabled, 登录已经点就是active，否则什么都没有-->
+                <a class="btn border-0 btn-outline-success btn-sm" th:href="@{/post/toggleLikePost(userId=${session.user.id}, postId=${post.id})}"
+                   th:classappend="${session.user == null ? 'disabled' : (likePost != null ? 'active' : '') }"
+                >
+                    <i class="far fa-heart"></i>
+                    liked: <span th:text="${post.likeCount}">999</span>
+                </a>
             </div>
             <hr>
             <!--content row-->
@@ -49,7 +55,8 @@
             <hr>
             <!--Reply count row, also reply collapse-->
             <div>
-                <a class="btn btn-outline-info border-0 btn-sm" data-toggle="collapse" th:href="${'#primaryReply-list-' + post.id}"
+                <a class="btn btn-outline-info border-0 btn-sm" data-toggle="collapse"
+                   th:href="${'#primaryReply-list-' + post.id}"
                    role="button"
                    aria-expanded="false"><span th:text="${post.replyCount}">999</span> Replies</a>
                 <hr>
