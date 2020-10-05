@@ -40,4 +40,18 @@ public class SubReply {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "primary_reply_id")
     private PrimaryReply primaryReply;
+
+    @Override
+    public String toString() {
+        return "SubReply{" +
+                "id=" + id +
+                ", gmtCreated=" + gmtCreated +
+                ", gmtModified=" + gmtModified +
+                ", content='" + content + '\'' +
+                ", replyCount=" + replyCount +
+                ", likeCount=" + likeCount +
+                ", userId=" + user.getId() +
+                ", primaryReplyId=" + primaryReply.getId() +
+                '}';
+    }
 }

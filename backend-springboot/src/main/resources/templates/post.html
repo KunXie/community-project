@@ -24,7 +24,8 @@
                 Published: <span th:text="${#dates.format(post.gmtCreated, 'yyyy-MM-dd HH:mm')}"> 2020-09-27 </span> |
                 Viewed: <span th:text="${post.viewCount}"> 30 </span> |
                 <!--这个button如果没有登录就是disabled, 登录已经点就是active，否则什么都没有-->
-                <a class="btn border-0 btn-outline-success btn-sm" th:href="@{/post/toggleLikePost(userId=${session.user.id}, postId=${post.id})}"
+                <a class="btn border-0 btn-outline-success btn-sm"
+                   th:href="@{/post/toggleLikePost(userId=${session.user?.id}, postId=${post.id})}"
                    th:classappend="${session.user == null ? 'disabled' : (likePost != null ? 'active' : '') }"
                 >
                     <i class="far fa-heart"></i>
@@ -62,7 +63,7 @@
                 <hr>
             </div>
             <!--TODO Reply list row: media list-->
-            <div class="row collapse" th:id="${'primaryReply-list-' + post.id}">
+            <div class="row collapse show" th:id="${'primaryReply-list-' + post.id}">
                 <!--five replies per page-->
                 <div class="col-12">
                     <ul class="list-unstyled mt-3">
@@ -128,14 +129,20 @@
                                         </ul>
                                     </div>
                                     <!--TODO sub reply input-->
-                                    <div class="col-12">
-                                        <form action="" class="form-inline">
+                                    <div class="col-12" th:if="${session.user}">
+                                        <form method="post" th:object="${subReply}"
+                                              th:action="@{/reply/sub(primaryReplyId=${primaryReply.id})}"
+                                              class="form-inline">
                                             <div class="input-group" style="width: 100%">
+                                                <input type="hidden" th:field="*{user}"
+                                                       th:id="${'hidden-user-' + primaryReply.id}">
                                                 <label th:for="${'#sub-reply-to-' + primaryReply.id}" class="sr-only">Sub-reply
                                                     content</label>
-                                                <input th:id="${'sub-reply-to-' + primaryReply.id}" type="text"
+                                                <input th:field="*{content}"
+                                                       th:id="${'sub-reply-to-' + primaryReply.id}" type="text"
                                                        class="form-control d-inline-block"
-                                                       placeholder="reply to this comment...">
+                                                       placeholder="reply to this comment..."
+                                                       autocomplete="off">
                                                 <div class="input-group-append">
                                                     <button class="btn btn-outline-success" type="submit">Reply</button>
                                                 </div>
@@ -202,17 +209,23 @@
                 </div>
                 <hr>
             </div>
+            <!--primary reply textarea-->
+            <form th:if="${session.user}" method="post" th:action="@{/reply/primary}" th:object="${primaryReply}">
+                <input type="hidden" th:field="*{user}">
+                <input type="hidden" th:field="*{post}">
 
-            <!--Reply textarea row-->
-            <div class="row my-4">
-                <h6 class="h6">Your Reply: </h6>
-                <div class="col-12" id="reply-content-editor" style="min-height: 30vh;">
-                    <textarea id="reply-content-area" style="display: none"></textarea>
+                <!--Reply textarea row-->
+                <div class="row my-4">
+                    <h6 class="h6">Your Reply: </h6>
+                    <div class="col-12" id="reply-content-editor" style="min-height: 30vh;">
+                        <textarea id="reply-content-area" style="display: none" th:field="*{content}"></textarea>
+                    </div>
                 </div>
-            </div>
-            <div class="row mb-3 justify-content-end">
-                <button type="submit" class="btn btn-outline-success border-0">Reply</button>
-            </div>
+                <div class="row mb-3 justify-content-end">
+                    <button type="submit" class="btn btn-outline-success border-0">Reply</button>
+                </div>
+            </form>
+
         </div>
         <!--TODO right side data-->
         <div class="col-md-3 col-12">

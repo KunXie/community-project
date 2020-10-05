@@ -51,21 +51,34 @@ public class PostController {
                            @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize,
                            Model model,
                            HttpSession httpSession) {
+        // for the like button
         User user = (User) httpSession.getAttribute("user");
         if (user != null) {
             LikePost likePost = likePostRepository.find(user.getId(), postId);
             model.addAttribute("likePost", likePost);
-
-            System.out.println("LikePost : " + likePost);
-            System.out.println("user: " + user.getId());
         }
 
+        // for the view count
         postRepository.incrementViewCount(postId);
+
+        // for the primary reply list
         Post post = postRepository.findById(postId).orElse(null);
         model.addAttribute("post", post);
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("gmtModified").descending());
         Page<PrimaryReply> primaryReplies = primaryReplyRepository.findAllByPost(post, pageable);
         model.addAttribute("primaryReplies", primaryReplies);
+
+        // for the sub reply textarea
+        SubReply subReply = new SubReply();
+        subReply.setUser(user); // 这里不设置primaryReply因为他们是变化的
+        model.addAttribute("subReply", subReply);
+
+        // for the reply textarea
+        PrimaryReply primaryReply = new PrimaryReply();
+        primaryReply.setUser(user);
+        primaryReply.setPost(post);
+        model.addAttribute("primaryReply", primaryReply);
+
         return "post";
     }
 

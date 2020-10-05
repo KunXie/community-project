@@ -13,6 +13,12 @@ import java.util.Set;
 @Getter
 @Setter
 public class PrimaryReply {
+
+    public PrimaryReply() {
+        replyCount = 0;
+        likeCount = 0;
+    }
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,4 +51,19 @@ public class PrimaryReply {
     @JsonIgnoreProperties(value = {"primaryReply"})
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "primaryReply")
     private Set<SubReply> subReplies = new HashSet<>();
+
+    @Override
+    public String toString() {
+        return "PrimaryReply{" +
+                "id=" + id +
+                ", gmtCreated=" + gmtCreated +
+                ", gmtModified=" + gmtModified +
+                ", content='" + content + '\'' +
+                ", replyCount=" + replyCount +
+                ", likeCount=" + likeCount +
+                ", user=" + user.getId() +
+                ", post=" + post.getId() +
+                ", subReplies=" + subReplies.size() +
+                '}';
+    }
 }
