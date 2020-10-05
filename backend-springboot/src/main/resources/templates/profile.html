@@ -14,83 +14,95 @@
     Index Nav Part
 </nav>
 <main class="container mt-5 pt-4" style="min-height: 85vh;">
-    <nav>
-        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-            <a class="nav-link" id="question-tab" data-toggle="tab" href="#question-pane" role="tab"
-               aria-controls="question-tab" aria-selected="false">Questions</a>
-            <a class="nav-link" id="notification-tab" data-toggle="tab" href="#notification-pane" role="tab"
-               aria-controls="notification-tab" aria-selected="false">Notifications</a>
-            <a class="nav-link" id="personal-info-tab" data-toggle="tab" href="#personal-info-pane" role="tab"
-               aria-controls="personal-info-tab" aria-selected="false">Personal Info</a>
+    <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs" id="nav-tab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link" id="question-tab" data-toggle="tab" href="#question-pane" role="tab"
+                       aria-controls="question-tab" aria-selected="false">Questions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="notification-tab" data-toggle="tab" href="#notification-pane" role="tab"
+                       aria-controls="notification-tab" aria-selected="false">Notifications</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="personal-info-tab" data-toggle="tab" href="#personal-info-pane" role="tab"
+                       aria-controls="personal-info-tab" aria-selected="false">Personal Info</a>
+                </li>
+            </ul>
         </div>
-    </nav>
-    <div class="tab-content" id="nav-tabContent">
-        <!--        questions pane-->
-        <div class="tab-pane fade" id="question-pane" role="tabpanel" aria-labelledby="question-tab">
-            Question Pane
-        </div>
-        <!--        notification pane-->
-        <div class="tab-pane fade" id="notification-pane" role="tabpanel" aria-labelledby="notification-tab">
-            Notification Pane
-        </div>
-        <!--        personal info pane-->
-        <div class="tab-pane fade p-2" id="personal-info-pane" role="tabpanel" aria-labelledby="personal-info-tab">
-            <!-- th:object 不能使用 th:object="${session.user}"-->
-            <form class="personal-info p-5 m-auto" method="post" onsubmit="return isValidated()"
-                  th:action="@{/authentication/update}" th:object="${user}">
-                <div class="row mb-3">
-                    <img class="mx-auto rounded justify-content-center" th:src="*{avatarUrl}"
-                         src="https://picsum.photos/100/100" alt="" width="100" height="100">
+        <div class="card-body">
+            <div class="tab-content" id="nav-tabContent">
+                <!--        questions pane-->
+                <div class="tab-pane fade" id="question-pane" role="tabpanel" aria-labelledby="question-tab">
+                    Question Pane
                 </div>
-                <h4 class="h5 mb-3 font-weight-normal text-center"><span th:text="*{username}">User Name</span>'s
-                    Personal Information</h4>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="firstName">First name</label>
-                        <input th:field="*{firstname}" type="text" class="form-control" id="firstName" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="lastName">Last name</label>
-                        <input th:field="*{lastname}" type="text" class="form-control" id="lastName" required>
-                    </div>
+                <!--        notification pane-->
+                <div class="tab-pane fade" id="notification-pane" role="tabpanel" aria-labelledby="notification-tab">
+                    Notification Pane
                 </div>
+                <!--        personal info pane-->
+                <div class="tab-pane fade p-2" id="personal-info-pane" role="tabpanel" aria-labelledby="personal-info-tab">
+                    <!-- th:object 不能使用 th:object="${session.user}"-->
+                    <form class="personal-info p-5 m-auto" method="post" onsubmit="return isValidated()"
+                          th:action="@{/authentication/update}" th:object="${user}">
+                        <div class="row mb-3">
+                            <img class="mx-auto rounded justify-content-center" th:src="*{avatarUrl}"
+                                 src="https://picsum.photos/100/100" alt="" width="100" height="100">
+                        </div>
+                        <h4 class="h5 mb-3 font-weight-normal text-center"><span th:text="*{username}">User Name</span>'s
+                            Personal Information</h4>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="firstName">First name</label>
+                                <input th:field="*{firstname}" type="text" class="form-control" id="firstName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="lastName">Last name</label>
+                                <input th:field="*{lastname}" type="text" class="form-control" id="lastName" required>
+                            </div>
+                        </div>
 
-                <div class="mb-3">
-                    <label for="username">Username</label>
-                    <input th:field="*{username}" type="text" class="form-control" id="username" required>
-                </div>
+                        <div class="mb-3">
+                            <label for="username">Username</label>
+                            <input th:field="*{username}" type="text" class="form-control" id="username" required>
+                        </div>
 
-                <div class="mb-3">
-                    <label for="email">Email</label>
-                    <input th:field="*{emailAddress}" type="email" class="form-control" id="email" required readonly>
-                </div>
+                        <div class="mb-3">
+                            <label for="email">Email</label>
+                            <input th:field="*{emailAddress}" type="email" class="form-control" id="email" required
+                                   readonly>
+                        </div>
 
-                <div class="mb-3">
-                    <label for="password">Password</label>
-                    <input th:field="*{password}" type="password" class="form-control" id="password" th:value="*{password}">
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <button class="btn btn-info" type="button" th:data-email-address="*{emailAddress}"
-                                onclick="getValidationCode(this.dataset.emailAddress)">Get Validation Code
-                        </button>
-                    </div>
+                        <div class="mb-3">
+                            <label for="password">Password</label>
+                            <input th:field="*{password}" type="password" class="form-control" id="password"
+                                   th:value="*{password}">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <button class="btn btn-info" type="button" th:data-email-address="*{emailAddress}"
+                                        onclick="getValidationCode(this.dataset.emailAddress)">Get Validation Code
+                                </button>
+                            </div>
 
-                    <div class="col-md-6 mb-3">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
                             <span id="validation-mark" class="input-group-text" hidden>
                                 <i class="fas fa-check" style="color: #1DC116"></i>
                             </span>
+                                    </div>
+                                    <input onkeyup="checkValidationCode(this.value)" type="text" class="form-control"
+                                           id="validation-code">
+                                </div>
                             </div>
-                            <input onkeyup="checkValidationCode(this.value)" type="text" class="form-control"
-                                   id="validation-code">
                         </div>
-                    </div>
+                        <hr class="mb-3">
+                        <button class="btn btn-success btn-block" type="submit">Update</button>
+                    </form>
                 </div>
-                <hr class="mb-3">
-                <button class="btn btn-success btn-block" type="submit">Update</button>
-            </form>
+            </div>
         </div>
     </div>
 </main>
@@ -130,7 +142,8 @@
 
 
     function checkValidationCode(inputValidationCode) {
-        /*debug*/console.log(inputValidationCode);
+        /*debug*/
+        console.log(inputValidationCode);
         const validationMarkEle = document.getElementById("validation-mark");
 
         fetch("/authentication/validation-code", {
@@ -144,7 +157,8 @@
         })
             .then(response => response.json())
             .then(data => {
-                /*debug*/console.log(data);
+                /*debug*/
+                console.log(data);
                 // hide the element when result !=== 'true'
                 validationMarkEle.hidden = data.result !== "true";
             })

@@ -136,3 +136,8 @@ CREATE OR REPLACE VIEW post_list_view AS
         user.avatar_url AS avatar_url  
     FROM post JOIN user ON post.user_id = user.id;
 
+CREATE OR REPLACE VIEW tag_count_view AS
+    SELECT tag_name, COUNT(post_id) AS tag_count
+    FROM tag JOIN post_tag ON tag.id = post_tag.tag_id
+    GROUP BY tag_name;
+

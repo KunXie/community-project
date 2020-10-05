@@ -51,6 +51,7 @@ public class PostController {
                            @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
                            @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize,
                            Model model) {
+        postRepository.incrementViewCount(postId);
         Post post = postRepository.findById(postId).orElse(null);
         model.addAttribute("post", post);
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("gmtModified").descending());

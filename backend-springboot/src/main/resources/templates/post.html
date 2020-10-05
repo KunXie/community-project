@@ -49,7 +49,7 @@
             <hr>
             <!--Reply count row, also reply collapse-->
             <div>
-                <a class="btn btn-outline-info" data-toggle="collapse" th:href="${'#primaryReply-list-' + post.id}"
+                <a class="btn btn-outline-info border-0 btn-sm" data-toggle="collapse" th:href="${'#primaryReply-list-' + post.id}"
                    role="button"
                    aria-expanded="false"><span th:text="${post.replyCount}">999</span> Replies</a>
                 <hr>
@@ -203,6 +203,9 @@
                     <textarea id="reply-content-area" style="display: none"></textarea>
                 </div>
             </div>
+            <div class="row mb-3 justify-content-end">
+                <button type="submit" class="btn btn-outline-success border-0">Reply</button>
+            </div>
         </div>
         <!--TODO right side data-->
         <div class="col-md-3 col-12">
@@ -232,12 +235,8 @@
 <script type="application/javascript" src="../static/editormd/lib/marked.min.js"></script>
 <script type="application/javascript" src="../static/editormd/lib/prettify.min.js"></script>
 <!--/*/ </th:block> /*/-->
+<script type="application/javascript" src="../static/js/post.js" th:src="@{/js/post.js}"></script>
 <script type="text/javascript" th:inline="javascript">
-    function toggleSubReplies(commentIconEle) {
-        commentIconEle.classList.toggle("far");
-        commentIconEle.classList.toggle("fas");
-    }
-
     window.onload = () => {
         const showPostContent = editormd.markdownToHTML("post-content", {});
 
